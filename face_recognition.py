@@ -14,8 +14,7 @@ def face_detection(img):
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Using Haar Cascade Classifier from opencv repo
-    face_haar = cv2.CascadeClassifier(
-        'https://github.com/opencv/opencv/blob/master/data/haarcascades/haarcascade_frontalface_alt.xml')
+    face_haar = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 
     # Extracting the face from the image
     face = face_haar.detectMultiScale(gray_img, scaleFactor=1.2, minNeighbors=3)
@@ -51,15 +50,15 @@ def label_training_data(directory):
             print('id: ', id)
 
             # Load and save the image
-            test_img = cv2.imread(img_path)
+            train_img = cv2.imread(img_path)
 
             # If image directory is empty, print message and skip it
-            if test_img is None:
+            if train_img is None:
                 print('No Images Found!')
                 continue
 
             # Call face_detection function and get extracted face and grayscale img
-            face, gray_img = face_detection(test_img)
+            face, gray_img = face_detection(train_img)
 
             # Skip to the next one if no face is extracted from the image
             if len(face) != 1:
@@ -69,7 +68,7 @@ def label_training_data(directory):
             (x, y, w, h) = face[0]
 
             # Extracting the Reason of Interest from the grayscale image
-            roi_gray = gray_img[y:y+w, x:x+h]
+            roi_gray = gray_img[x:x+w, y:y+h]
 
             face_list.append(roi_gray)
             face_id_list.append(int(id))
@@ -85,7 +84,7 @@ def train_classifier(face_list, face_id_list):
     '''
 
     face_clf = cv2.face.LBPHFaceRecognizer_create()
-    face_clf.train(face_list), np.array(face_id_list)
+    face_clf.train(face_list, np.array(face_id_list))
 
     return face_clf
 
