@@ -13,17 +13,10 @@ test_img = cv2.imread("profile_2.jpg")
 faces_detected, gray_img = fr.face_detection(test_img)
 print('Face Detected: ', faces_detected)
 
+face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 
-# ----------------- Training ----------------------
-
-# Call and extract the face_list and face_id_list from label_training_data func
-face_list, face_id_list = fr.label_training_data('images')
-
-# Call and train face recognizer/classifier from train_classifier func
-face_clf = fr.train_classifier(face_list, face_id_list)
-
-# Save the classifier/recognizer
-face_clf.save(r'model\face_recognition_1.yml')
+# Read/Load from the saved model
+face_recognizer.read(r'model\face_recognition_0.yml')
 
 # Assign labels for faces in the dictionary 'name' as (key, value) pairs
 name = {0: 'Banish'}   # 1, 2.... for adding more faces
@@ -35,7 +28,7 @@ for face in faces_detected:
     roi_gray = gray_img[y:y+w, x:x+h]
 
     # Name of the person and confidence in the prediction
-    label, confidence = face_clf.predict(roi_gray)
+    label, confidence = face_recognizer.predict(roi_gray)
 
     print('Confidence: ', confidence)
     print('Label: ', label)
@@ -45,6 +38,12 @@ for face in faces_detected:
 
     # Save the name as predict_name
     predict_name = name[label]
+
+    # Lower the confidence, better the results (threshold)
+    if confidence > 50:
+        fr.write_text(test_img, 'Unknown', x, y)
+        continue
+
 
     # Add the label/name to the image using write_text func
     fr.write_text(test_img, predict_name, x, y)
@@ -59,5 +58,3 @@ cv2.imshow('Face Recognition', resize_img)
 # Close it upon user clicking 0
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
-# -----------------------------------------------------------

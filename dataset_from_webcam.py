@@ -7,9 +7,9 @@ cpt = 0
 users = 0;
 
 while True:
-    user_images_path = r"train-images\0" + str(
+    user_images_path = "train-images/0" + str(
         users)
-    # Give path to  train-images/ and keep image%04i.jpg as it is in this line.
+    # Give path to  train-images.
     # Your images will be stored at train-images/ respective index number folder
     if path.exists(user_images_path):
         users += 1

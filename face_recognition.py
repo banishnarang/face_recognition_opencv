@@ -68,12 +68,12 @@ def label_training_data(directory):
             (x, y, w, h) = face[0]
 
             # Extracting the Reason of Interest from the grayscale image
-            roi_gray = gray_img[x:x+w, y:y+h]
+            roi_gray = gray_img[y:y+w, x:x+h]
 
             face_list.append(roi_gray)
             face_id_list.append(int(id))
 
-        return face_list, face_id_list
+    return face_list, face_id_list
 
 
 def train_classifier(face_list, face_id_list):
